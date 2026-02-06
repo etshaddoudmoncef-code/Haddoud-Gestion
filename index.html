@@ -7,13 +7,15 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     window.process = { env: { API_KEY: "" } };
   </script>
   <style>
-    body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
+    #root { min-height: 100vh; }
   </style>
   <script type="importmap">
 {
