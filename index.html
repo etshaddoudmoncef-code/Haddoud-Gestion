@@ -12,7 +12,7 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Initialisation globale
+    // Configuration globale
     window.process = { env: { API_KEY: "" } };
     
     // Système de log d'erreurs pour Android WebView
@@ -21,7 +21,7 @@
       const debugDiv = document.getElementById('debug-error');
       if (debugDiv) {
         debugDiv.style.display = 'block';
-        debugDiv.innerHTML = `<b>Erreur:</b> ${msg}<br><b>Ligne:</b> ${line}`;
+        debugDiv.innerHTML = `<b>Erreur fatale détectée:</b><br>${msg}<br><br><small>Fichier: ${url}<br>Ligne: ${line}</small>`;
       }
       return false;
     };
@@ -43,7 +43,7 @@
     .loader { width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
   </style>
 
-  <!-- Importmap FIXÉ : Une seule version de React pour éviter tout conflit -->
+  <!-- IMPORTMAP NETTOYÉ : Correction des doublons de versions -->
   <script type="importmap">
 {
   "imports": {
@@ -63,10 +63,10 @@
 </head>
 <body>
   <div id="root">
-    <div class="flex flex-col items-center justify-center h-screen space-y-4">
+    <div class="flex flex-col items-center justify-center h-screen space-y-4 px-6 text-center">
       <div class="loader"></div>
-      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement sécurisé...</p>
-      <div id="debug-error" style="display:none; font-family:monospace; font-size:10px; color:red; padding:15px; background:#fff1f2; border:1px solid #fecaca; border-radius:12px; max-width:85%; word-break:break-all; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></div>
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Démarrage forcé du système...</p>
+      <div id="debug-error" style="display:none; font-family:monospace; font-size:11px; color:#991b1b; padding:20px; background:#fef2f2; border:2px solid #fee2e2; border-radius:16px; max-width:100%; word-break:break-all; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);"></div>
     </div>
   </div>
   <script type="module" src="./index.tsx" crossorigin="anonymous"></script>
