@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ProductionRecord, PurchaseRecord, StockOutRecord, 
   PrestationProdRecord, PrestationEtuvageRecord, 
@@ -29,7 +29,7 @@ const DEFAULT_MASTER: MasterData = {
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('h_user');
+    const saved = localStorage.getItem('prod_user');
     return saved ? JSON.parse(saved) : null;
   });
 
@@ -37,25 +37,25 @@ const App: React.FC = () => {
   const [prodSub, setProdSub] = useState<'stats' | 'form' | 'journal' | 'lots'>('stats');
   const [editing, setEditing] = useState<any>(null);
 
-  // States persistants
-  const [records, setRecords] = useState<ProductionRecord[]>(() => JSON.parse(localStorage.getItem('h_records') || '[]'));
-  const [prestationProd, setPrestationProd] = useState<PrestationProdRecord[]>(() => JSON.parse(localStorage.getItem('h_prestation_prod') || '[]'));
-  const [prestationEtuvage, setPrestationEtuvage] = useState<PrestationEtuvageRecord[]>(() => JSON.parse(localStorage.getItem('h_prestation_etuvage') || '[]'));
-  const [users, setUsers] = useState<User[]>(() => JSON.parse(localStorage.getItem('h_users') || '[]'));
-  const [purchases, setPurchases] = useState<PurchaseRecord[]>(() => JSON.parse(localStorage.getItem('h_purchases') || '[]'));
-  const [stockOuts, setStockOuts] = useState<StockOutRecord[]>(() => JSON.parse(localStorage.getItem('h_stockouts') || '[]'));
-  const [master, setMaster] = useState<MasterData>(() => JSON.parse(localStorage.getItem('h_master') || JSON.stringify(DEFAULT_MASTER)));
+  // States persistants (Harmonisation des clés avec prod_)
+  const [records, setRecords] = useState<ProductionRecord[]>(() => JSON.parse(localStorage.getItem('prod_records') || '[]'));
+  const [prestationProd, setPrestationProd] = useState<PrestationProdRecord[]>(() => JSON.parse(localStorage.getItem('prod_prestation_prod') || '[]'));
+  const [prestationEtuvage, setPrestationEtuvage] = useState<PrestationEtuvageRecord[]>(() => JSON.parse(localStorage.getItem('prod_prestation_etuvage') || '[]'));
+  const [users, setUsers] = useState<User[]>(() => JSON.parse(localStorage.getItem('prod_users') || '[]'));
+  const [purchases, setPurchases] = useState<PurchaseRecord[]>(() => JSON.parse(localStorage.getItem('prod_purchases') || '[]'));
+  const [stockOuts, setStockOuts] = useState<StockOutRecord[]>(() => JSON.parse(localStorage.getItem('prod_stock_outs') || '[]'));
+  const [master, setMaster] = useState<MasterData>(() => JSON.parse(localStorage.getItem('prod_master_data') || JSON.stringify(DEFAULT_MASTER)));
 
   useEffect(() => {
-    localStorage.setItem('h_records', JSON.stringify(records));
-    localStorage.setItem('h_prestation_prod', JSON.stringify(prestationProd));
-    localStorage.setItem('h_prestation_etuvage', JSON.stringify(prestationEtuvage));
-    localStorage.setItem('h_users', JSON.stringify(users));
-    localStorage.setItem('h_purchases', JSON.stringify(purchases));
-    localStorage.setItem('h_stockouts', JSON.stringify(stockOuts));
-    localStorage.setItem('h_master', JSON.stringify(master));
-    if (currentUser) localStorage.setItem('h_user', JSON.stringify(currentUser));
-    else localStorage.removeItem('h_user');
+    localStorage.setItem('prod_records', JSON.stringify(records));
+    localStorage.setItem('prod_prestation_prod', JSON.stringify(prestationProd));
+    localStorage.setItem('prod_prestation_etuvage', JSON.stringify(prestationEtuvage));
+    localStorage.setItem('prod_users', JSON.stringify(users));
+    localStorage.setItem('prod_purchases', JSON.stringify(purchases));
+    localStorage.setItem('prod_stock_outs', JSON.stringify(stockOuts));
+    localStorage.setItem('prod_master_data', JSON.stringify(master));
+    if (currentUser) localStorage.setItem('prod_user', JSON.stringify(currentUser));
+    else localStorage.removeItem('prod_user');
   }, [records, prestationProd, prestationEtuvage, users, purchases, stockOuts, master, currentUser]);
 
   const isAdmin = currentUser?.role === 'ADMIN';
