@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component, ErrorInfo } from 'react';
 import { 
   User, ProductionRecord, MasterData, MainTab, 
   PurchaseRecord, StockOutRecord, PrestationProdRecord, PrestationEtuvageRecord 
@@ -17,6 +17,56 @@ import PrestationProdModule from './components/PrestationProdModule.tsx';
 import PrestationEtuvageModule from './components/PrestationEtuvageModule.tsx';
 import LotTraceability from './components/LotTraceability.tsx';
 
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-red-50 p-6">
+          <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border border-red-100 text-center">
+            <div className="text-4xl mb-4">🤕</div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">Oups, une erreur est survenue</h2>
+            <p className="text-sm text-slate-500 mb-6">L'application a rencontré un problème inattendu.</p>
+            <div className="bg-slate-100 p-4 rounded-xl text-left overflow-auto max-h-40 mb-6">
+              <code className="text-[10px] text-red-600 font-mono">{this.state.error?.message}</code>
+            </div>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-colors"
+            >
+              Recharger la page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export const generateId = () => Math.random().toString(36).substr(2, 9);
 
 const DEFAULT_MASTER: MasterData = {
@@ -28,7 +78,7 @@ const DEFAULT_MASTER: MasterData = {
   serviceTypes: ['Triage', 'Calibrage', 'Conditionnement', 'Lavage']
 };
 
-export default function App() {
+function AppContent() {
   const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('prod_current_user');
     return saved ? JSON.parse(saved) : null;
@@ -102,9 +152,8 @@ export default function App() {
       
       for (let j = 0; j < dailyCount; j++) {
         const prod = products[Math.floor(Math.random() * products.length)];
-        // Logic: More employees = roughly more weight
-        const emp = Math.floor(Math.random() * 10) + 5; // 5 to 15 employees
-        const productivity = 50 + Math.random() * 30; // 50 to 80 kg per person
+        const emp = Math.floor(Math.random() * 10) + 5; 
+        const productivity = 50 + Math.random() * 30; 
         const totalW = Math.floor(emp * productivity);
         
         newRecords.push({
@@ -115,7 +164,7 @@ export default function App() {
           productName: prod,
           employeeCount: emp,
           totalWeightKg: totalW,
-          wasteKg: Math.floor(totalW * (0.02 + Math.random() * 0.05)), // 2-7% waste
+          wasteKg: Math.floor(totalW * (0.02 + Math.random() * 0.05)), 
           infestationRate: Math.floor(Math.random() * 5),
           timestamp: date.getTime() + j
         });
@@ -240,5 +289,13 @@ export default function App() {
         />
       )}
     </Layout>
+  );
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
   );
 }

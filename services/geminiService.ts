@@ -5,8 +5,14 @@ import { ProductionRecord } from "../types.ts";
 export const analyzeProductionData = async (records: ProductionRecord[]) => {
   if (records.length === 0) return "Aucune donnée disponible pour l'analyse.";
 
-  // Use recommended initialization
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Secure API Key access for browser environment where process might not be fully polyfilled
+  const apiKey = (window as any).process?.env?.API_KEY || process.env.API_KEY;
+
+  if (!apiKey) {
+    return "Clé API manquante. Veuillez configurer l'API_KEY dans l'environnement.";
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   
   // Format data for the model
   const summary = records.slice(-15).map(r => 
