@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -16,6 +15,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Shim indispensable pour éviter les plantages ReferenceError: process is not defined
+    // Injecté avant tout chargement de module
     window.process = { env: { API_KEY: "" } };
   </script>
 

@@ -1,6 +1,5 @@
-
 import React, { useState, useMemo } from 'react';
-import { PurchaseRecord, MasterData } from '../types';
+import { PurchaseRecord, MasterData } from '../types.ts';
 import { CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Cell, AreaChart, Area } from 'recharts';
 
 interface PurchaseModuleProps {
