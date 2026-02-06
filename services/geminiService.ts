@@ -5,24 +5,27 @@ import { ProductionRecord } from "../types.ts";
 export const analyzeProductionData = async (records: ProductionRecord[]) => {
   if (records.length === 0) return "Aucune donnée disponible pour l'analyse.";
 
-  // Use recommended initialization with process.env.API_KEY
+  // Use recommended initialization
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  const summary = records.slice(-10).map(r => 
-    `- Lot ${r.lotNumber}: ${r.totalWeightKg}kg produit par ${r.employeeCount} employés, ${r.wasteKg}kg de pertes.`
+  // Format data for the model
+  const summary = records.slice(-15).map(r => 
+    `- Date: ${r.date}, Lot: ${r.lotNumber}, Produit: ${r.productName}, Prod: ${r.totalWeightKg}kg, Emp: ${r.employeeCount}, Pertes: ${r.wasteKg}kg`
   ).join('\n');
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Tu es un expert en gestion de production pour les Établissements Haddoud Moncef. Analyse ces données et donne 3 conseils stratégiques courts en français.\n\nDonnées :\n${summary}`,
-      config: { temperature: 0.7 }
+      contents: `Voici les dernières données de production des serres :\n${summary}\n\nAnalyse la corrélation entre le nombre d'employés et la production, et identifie les anomalies de pertes.`,
+      config: { 
+        temperature: 0.7,
+        systemInstruction: "Tu es un ingénieur agronome expert en gestion de production pour les Établissements Haddoud Moncef. Tes réponses doivent être en français, stratégiques, concises (max 3 points clés), et orientées vers l'optimisation des coûts et du rendement par employé.",
+      }
     });
 
-    // Use .text property directly as per guidelines
-    return response.text || "Analyse indisponible.";
+    return response.text || "Analyse indisponible pour le moment.";
   } catch (err) {
     console.error("Gemini Error:", err);
-    return "Erreur d'analyse IA. Vérifiez votre connexion.";
+    return "Le service d'analyse IA est momentanément indisponible. Vérifiez votre clé API ou votre connexion.";
   }
 };

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   User, ProductionRecord, MasterData, MainTab, 
@@ -19,12 +20,12 @@ import LotTraceability from './components/LotTraceability.tsx';
 export const generateId = () => Math.random().toString(36).substr(2, 9);
 
 const DEFAULT_MASTER: MasterData = {
-  products: ['Tomate Roma', 'Tomate Cerise', 'Poivron', 'Concombre'],
-  clients: ['Local Market', 'Export FR', 'Export DE'],
-  packagings: ['Caisse 10kg', 'Caisse 5kg', 'Plateau'],
-  suppliers: ['AgriPlus', 'Sidi Bel Abbes', 'Local Farmer'],
-  purchaseCategories: ['Intrants', 'Emballages', 'Maintenance'],
-  serviceTypes: ['Triage', 'Calibrage', 'Conditionnement']
+  products: ['Tomate Roma', 'Tomate Cerise', 'Poivron Rouge', 'Poivron Vert', 'Concombre'],
+  clients: ['Marché de Gros', 'Superette Center', 'Export France', 'Export Dubaï'],
+  packagings: ['Caisse 10kg', 'Caisse 5kg', 'Plateau', 'Vrac'],
+  suppliers: ['AgriPlus', 'Sidi Bel Abbes Semences', 'Local Farmer'],
+  purchaseCategories: ['Intrants', 'Emballages', 'Maintenance', 'Semences'],
+  serviceTypes: ['Triage', 'Calibrage', 'Conditionnement', 'Lavage']
 };
 
 export default function App() {
@@ -83,42 +84,46 @@ export default function App() {
     else localStorage.removeItem('prod_current_user');
   }, [user, users, records, purchases, stockOuts, prestationsProd, prestationsEtuvage, masterData]);
 
-  // Fonction de test pour générer des données fictives
   const generateTestData = () => {
-    if(!confirm("Générer des données de test ? (Cela n'effacera pas vos données existantes)")) return;
+    if(!confirm("Générer des données de test pour la semaine ?")) return;
     
-    const lotNum = "TEST-" + Math.floor(Math.random()*999);
-    const newPurchase: PurchaseRecord = {
-      id: generateId(),
-      date: new Date().toISOString().split('T')[0],
-      lotNumber: lotNum,
-      supplierName: masterData.suppliers[0],
-      itemName: masterData.products[0],
-      category: masterData.purchaseCategories[0],
-      quantity: 1000,
-      unit: 'Kg',
-      unitPrice: 50,
-      totalAmount: 50000,
-      infestationRate: 2,
-      timestamp: Date.now()
-    };
+    const newRecords: ProductionRecord[] = [];
+    const products = masterData.products;
+    const clients = masterData.clients;
 
-    const newProd: ProductionRecord = {
-      id: generateId(),
-      date: new Date().toISOString().split('T')[0],
-      lotNumber: lotNum,
-      clientName: masterData.clients[0],
-      productName: masterData.products[0],
-      employeeCount: 15,
-      totalWeightKg: 950,
-      wasteKg: 50,
-      infestationRate: 1,
-      timestamp: Date.now() + 1000
-    };
+    // Generate data for last 7 days to show trend
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // 1 to 3 records per day
+      const dailyCount = Math.floor(Math.random() * 3) + 1;
+      
+      for (let j = 0; j < dailyCount; j++) {
+        const prod = products[Math.floor(Math.random() * products.length)];
+        // Logic: More employees = roughly more weight
+        const emp = Math.floor(Math.random() * 10) + 5; // 5 to 15 employees
+        const productivity = 50 + Math.random() * 30; // 50 to 80 kg per person
+        const totalW = Math.floor(emp * productivity);
+        
+        newRecords.push({
+          id: generateId(),
+          date: dateStr,
+          lotNumber: `LOT-${date.getMonth()+1}${date.getDate()}-${j+1}`,
+          clientName: clients[Math.floor(Math.random() * clients.length)],
+          productName: prod,
+          employeeCount: emp,
+          totalWeightKg: totalW,
+          wasteKg: Math.floor(totalW * (0.02 + Math.random() * 0.05)), // 2-7% waste
+          infestationRate: Math.floor(Math.random() * 5),
+          timestamp: date.getTime() + j
+        });
+      }
+    }
 
-    setPurchases([newPurchase, ...purchases]);
-    setRecords([newProd, ...records]);
-    alert("Données de test générées pour le lot " + lotNum);
+    setRecords([...newRecords, ...records]);
+    alert(`${newRecords.length} enregistrements de production générés.`);
     setActiveTab('production');
     setProductionSubTab('dash');
   };
