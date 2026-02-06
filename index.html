@@ -17,7 +17,7 @@
     // Configuration globale
     window.process = { env: { API_KEY: "" } };
 
-    // Système de log d'erreurs amélioré
+    // Système de log d'erreurs amélioré pour mobile
     window.onerror = function(msg, url, line, col, error) {
       const errorDisplay = document.getElementById('error-display');
       const errorText = document.getElementById('error-text');
@@ -28,14 +28,14 @@
       return false;
     };
 
-    // Capture des erreurs de chargement de modules (importmap)
+    // Capture spécifique des erreurs d'import de modules
     window.addEventListener('error', function(e) {
       if (e.target.tagName === 'SCRIPT' || (e.message && e.message.includes('import'))) {
         const errorDisplay = document.getElementById('error-display');
         const errorText = document.getElementById('error-text');
         if (errorDisplay && errorText) {
           errorDisplay.style.display = 'block';
-          errorText.textContent = "Conflit de bibliothèque ou réseau. Tentative de récupération...";
+          errorText.textContent = "Conflit réseau ou bibliothèque. Nettoyage du cache nécessaire.";
         }
       }
     }, true);
@@ -80,9 +80,9 @@
       <p id="loading-text" style="margin-top: 20px; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #1e293b;">Haddoud Moncef Gestion</p>
       
       <div id="error-display" style="margin-top: 30px; padding: 16px; border-radius: 20px; background: #fff1f2; border: 1px solid #fecaca; color: #991b1b; font-size: 11px; display: none; text-align: left; max-width: 300px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-        <p style="font-weight: 900; margin-bottom: 8px; text-transform: uppercase;">⚠️ Problème technique</p>
+        <p style="font-weight: 900; margin-bottom: 8px; text-transform: uppercase;">⚠️ Erreur de chargement</p>
         <p id="error-text" style="font-family: monospace; line-height: 1.5; word-break: break-all; opacity: 0.8;"></p>
-        <button onclick="window.location.reload(true)" style="margin-top: 15px; width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 10px; cursor: pointer;">Forcer le rechargement</button>
+        <button onclick="window.location.reload(true)" style="margin-top: 15px; width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 10px; cursor: pointer;">Réinitialiser l'application</button>
       </div>
     </div>
   </div>
