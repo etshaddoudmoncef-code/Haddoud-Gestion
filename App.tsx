@@ -83,6 +83,46 @@ export default function App() {
     else localStorage.removeItem('prod_current_user');
   }, [user, users, records, purchases, stockOuts, prestationsProd, prestationsEtuvage, masterData]);
 
+  // Fonction de test pour générer des données fictives
+  const generateTestData = () => {
+    if(!confirm("Générer des données de test ? (Cela n'effacera pas vos données existantes)")) return;
+    
+    const lotNum = "TEST-" + Math.floor(Math.random()*999);
+    const newPurchase: PurchaseRecord = {
+      id: generateId(),
+      date: new Date().toISOString().split('T')[0],
+      lotNumber: lotNum,
+      supplierName: masterData.suppliers[0],
+      itemName: masterData.products[0],
+      category: masterData.purchaseCategories[0],
+      quantity: 1000,
+      unit: 'Kg',
+      unitPrice: 50,
+      totalAmount: 50000,
+      infestationRate: 2,
+      timestamp: Date.now()
+    };
+
+    const newProd: ProductionRecord = {
+      id: generateId(),
+      date: new Date().toISOString().split('T')[0],
+      lotNumber: lotNum,
+      clientName: masterData.clients[0],
+      productName: masterData.products[0],
+      employeeCount: 15,
+      totalWeightKg: 950,
+      wasteKg: 50,
+      infestationRate: 1,
+      timestamp: Date.now() + 1000
+    };
+
+    setPurchases([newPurchase, ...purchases]);
+    setRecords([newProd, ...records]);
+    alert("Données de test générées pour le lot " + lotNum);
+    setActiveTab('production');
+    setProductionSubTab('dash');
+  };
+
   if (!user) {
     return (
       <Login 
@@ -191,6 +231,7 @@ export default function App() {
           onAddUser={(u) => setUsers([...users, u])}
           onDeleteUser={(id) => setUsers(users.filter(u => u.id !== id))}
           onUpdatePermissions={(id, tabs) => setUsers(users.map(u => u.id === id ? {...u, allowedTabs: tabs} : u))}
+          onGenerateTestData={generateTestData}
         />
       )}
     </Layout>
