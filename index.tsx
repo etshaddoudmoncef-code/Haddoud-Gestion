@@ -3,15 +3,11 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 
 /**
- * Lancement de l'application avec un filet de sécurité.
+ * Montage robuste de l'application
  */
-const startApplication = () => {
+const mount = () => {
   const container = document.getElementById('root');
-  
-  if (!container) {
-    console.error("DOM Root introuvable.");
-    return;
-  }
+  if (!container) return;
 
   try {
     const root = createRoot(container);
@@ -20,20 +16,19 @@ const startApplication = () => {
         <App />
       </React.StrictMode>
     );
-    console.log("Application Haddoud démarrée avec succès.");
-  } catch (error) {
-    console.error("Erreur de rendu React:", error);
+  } catch (err) {
+    console.error("Mount error:", err);
     const debug = document.getElementById('debug-error');
     if (debug) {
       debug.style.display = 'block';
-      debug.innerHTML = `<b>Erreur Système :</b> L'interface n'a pas pu être générée.<br>${error instanceof Error ? error.message : String(error)}`;
+      debug.innerHTML = "<b>Erreur fatale :</b> Le moteur React n'a pas pu s'initialiser.";
     }
   }
 };
 
-// On attend que le DOM soit totalement prêt
+// Exécution au chargement du DOM
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', startApplication);
+  document.addEventListener('DOMContentLoaded', mount);
 } else {
-  startApplication();
+  mount();
 }
